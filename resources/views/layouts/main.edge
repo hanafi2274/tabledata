@@ -24,21 +24,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
-<body class="slimscroll" style="background:#f5f6fa">
+<body class="slimscroll" style="background:#f5f6fa; background-image: linear-gradient(  rgba(255,0,0,0),rgba(255,0,0,1));  ">
     <div class="content-wrapper">
         @!section('content')
       </div>
 </body>
 </html>
 <style>
-         .slimscroll::-webkit-scrollbar
-        {
-            height: 12px;
-            scrollbar-color: #ddd rgba(255,255,255,0);
-        
-        }
-        .slimscroll {
-    scrollbar-color: #dddddd rgba(255, 255, 255, 0);
-    scrollbar-width: thin;
+  ::-webkit-scrollbar {
+    display: none;
 }
 </style>

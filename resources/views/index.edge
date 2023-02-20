@@ -1,25 +1,25 @@
     @layout('layouts.main')
     @section('content')
-    <section class="slimscroll">
+    <section class="slimscroll" style="color:#212529;">
       <div class="m-5">
-        <div class="card ">
-          <h5 class="card-header">Featured</h5>
-          <div class="card-body">
+        <div class="card " style="background:RGBA(245,246,250,0.6 );  border: none !important;">
+          {{--  <h5 class="card-header" style="font-weight:700;">DATA TABLE</h5>  --}}
+          <div class="card-body ">
             <h5 class="card-title"></h5>
             {{--  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>  --}}
 
-            <div class="row">
-              <div class="form-group col-10">
-                <label> Query</label>
-                <input class="form-control tagify" type="text" placeholder="Enter Query" name="query" id="query">
+            <div class="row datacard m-1">
+              <div class="form-group col-7 ">
+                <label style="font-size:29px; font-weight:700;"> Query</label>
+                <input class="form-control " type="text" placeholder="Enter Query" name="query" id="query">
               </div>
-              <div style="margin-top:32px;">
+              <div style="margin-top:52px;">
                 <button type="button" class="btn btn-success">Add Queries</button>
               </div>
-              <div class="ml-2" style="margin-top:32px;">
+              <div class="ml-2 col-2" style="margin-top:52px;">
                 <select id="datatrend" name="datatrend" class="form-control select2bs4" style="width:100%;">
                   <span class="select2-selection__placeholder">Select Schedule Type</span>
-                  <option selected>Select data : </option>
+                  <option selected>Select data </option>
                   <option value="0">No</option>
                   <option value="0">No</option>
                   <option value="0">No</option>
@@ -31,37 +31,44 @@
               </div>
             </div>
           </div>
-              <div class="row d-flex justify-content-around">
-                <div class="card " style="width: 18rem;">
-                  <div class="card-body">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                  </div>
-                </div>
-                <div class="card " style="width: 18rem;">
-                    <div class="card-body">
-                      <h5 class="card-title">Special title treatment</h5>
-                      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                      <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                  </div>
-                  <div class="card " style="width: 18rem;">
-                    <div class="card-body">
-                      <h5 class="card-title">Special title treatment</h5>
-                      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                      <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                  </div>
-                  <div class="card " style="width: 18rem;">
-                    <div class="card-body">
-                      <h5 class="card-title">Special title treatment</h5>
-                      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                      <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                  </div>
+          <div class="row d-flex justify-content-between ml-3 mr-3">
+            <div class="datacard" style="margin:10px;">
+              <p class="cardtitle">Number Of Mentions : penculikan</p>
+              <div class="d-block">
+                <p class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
+                  style="white-space: nowrap; display: inline-block; font-size: 80px;">1,584</p><span
+                  class="lead nowrap"></span>
               </div>
-          <div class="p-3">
+            </div>
+            <div class="datacard" style="margin:10px;">
+              <p class="cardtitle">Number Of Mentions : penculikan</p>
+              <div class="d-block">
+                <p class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
+                  style="white-space: nowrap; display: inline-block; font-size: 80px;">1,584</p><span
+                  class="lead nowrap"></span>
+              </div>
+            </div>
+
+            <div class="datacard" style="margin:10px;">
+              <p class="cardtitle">Number Of Mentions : penculikan</p>
+              <div class="d-block">
+                <p class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
+                  style="white-space: nowrap; display: inline-block; font-size: 80px;">1,584</p><span
+                  class="lead nowrap"></span>
+              </div>
+            </div>
+
+            <div class="datacard" style="margin:10px;">
+              <p class="cardtitle">Number Of Mentions : penculikan</p>
+              <div class="d-block">
+                <p class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
+                  style="white-space: nowrap; display: inline-block; font-size: 80px;">1,584</p><span
+                  class="lead nowrap"></span>
+              </div>
+            </div>
+
+          </div>
+          <div class="m-4 mt-3 datacard">
             <table id="example" class="table table-striped table-bordered nowrap" style="">
               <thead>
                 <tr>
@@ -576,4 +583,75 @@
       table.searchPanes.container().prependTo(table.table().container());
       table.searchPanes.resizePanes();
     </script>
+    <style>
+      .datacard {
+        background: #fff;
+        height: 100%;
+        padding: 20px 25px;
+        border-radius: 12px;
+        -webkit-box-shadow: 0 10px 20px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 20px -1px rgba(0, 0, 0, 0.1);
+        animation: reveal .5s ease;
+        overflow: hidden;
+      }
+
+      .datacardlabel {
+        font-size: 22px;
+        font-weight: bold;
+        position: relative;
+        margin: 8px;
+      }
+
+      .datacardlabel::after {
+        content: '';
+        width: 30px;
+        height: 2px;
+        background: #dc3545;
+        position: absolute;
+        border-radius: 2px;
+        bottom: -4px;
+        left: 0;
+      }
+
+      .datacard .cardtitle {
+        font-weight: bold;
+        position: relative;
+      }
+
+      .datacard .cardtitle::after {
+        content: '';
+        width: 30px;
+        height: 2px;
+        background: #dc3545;
+        position: absolute;
+        border-radius: 2px;
+        bottom: -6px;
+        left: 0;
+      }
+
+      .datacard .video-js {
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .datacard .imgslideshow {
+        width: 100%;
+        height: 200px;
+        position: relative;
+      }
+
+      .datacard .imgslideshow>img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      .datacard .polyimage {
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 12p
+    </style>
     @endsection
