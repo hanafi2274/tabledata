@@ -126,6 +126,7 @@
      
         await axios.get('/preview/'+send).then(async (x) => {
             var tempresult=[]
+            let rupiah = new Intl.NumberFormat('id-ID');
             for (let index = 0; index < x.data.length; index++) {
 
                 delete x.data[index].idBulan
@@ -138,9 +139,10 @@
                 let tempPerdata={
 
                 }
+                
                 tempPerdata.no=index+1
                 tempPerdata.paket=x.data[index].paket
-                tempPerdata.pagu=x.data[index].pagu
+                tempPerdata.pagu=rupiah.format(x.data[index].pagu)
                 tempPerdata.jenisPengadaan=x.data[index].jenisPengadaan
                 if(x.data[index].isPDN==true){
                     tempPerdata.isPDN="Produk Dalam Negeri"
