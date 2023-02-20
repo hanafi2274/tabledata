@@ -69,7 +69,7 @@
 
           </div>
           <div class="m-4 mt-3 datacard">
-            <table id="example" class="table table-striped table-bordered nowrap" style="width:100%">
+            <table id="example" class="table table-striped table-bordered nowrap" style="width:100%;">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -109,13 +109,20 @@
       
     async function getData(){
       var tempQuery=$('#query').val()
-      var tempValue=JSON.parse(tempQuery)
-      var send=[]
-      var tbody=document.getElementById('tbody')
-      for (let index = 0; index < tempValue.length; index++) {
+      if(tempQuery){
+
+          var tempValue=JSON.parse(tempQuery)
+             var send=[]
+
+          for (let index = 0; index < tempValue.length; index++) {
         send.push(tempValue[index].value)
-        
       }
+        
+      }else{
+        var send=""
+      }
+      var tbody=document.getElementById('tbody')
+     
         await axios.get('/preview/'+send).then(async (x) => {
             var tempresult=[]
             for (let index = 0; index < x.data.length; index++) {
@@ -171,6 +178,7 @@
           searchPanes: {
             layout: 'columns-2'
           },
+          scrollX: true,
           columnDefs: [{
               searchPanes: {
                 show: true
