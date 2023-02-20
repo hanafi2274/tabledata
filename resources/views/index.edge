@@ -106,8 +106,10 @@
       var table,arrColumn=[]
       var nowDate=new Date()
       var tempDate=nowDate.getDate()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getFullYear()+' '+nowDate.getHours()+':'+nowDate.getMinutes()+':'+nowDate.getSeconds()
-      
+      $("#dailyNews").dataTable().ajax.reload();
     async function getData(){
+      var tbody=document.getElementById('tbody')
+
       var tempQuery=$('#query').val()
       if(tempQuery){
 
@@ -121,7 +123,6 @@
       }else{
         var send=""
       }
-      var tbody=document.getElementById('tbody')
      
         await axios.get('/preview/'+send).then(async (x) => {
             var tempresult=[]
@@ -174,6 +175,7 @@
                 td.appendChild(document.createTextNode( tempresult[i][key[j]]));
             }     
     }
+    
     $('#example').DataTable({
           searchPanes: {
             layout: 'columns-2'
