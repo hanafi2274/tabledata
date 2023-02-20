@@ -559,12 +559,13 @@
       $('select > option:first').hide()
       var queryTagify = document.getElementById('query')
       new Tagify(queryTagify)
+      var table,arrColumn=[]
       $(document).ready(function () {
-        var table = $('#example').DataTable({
+      $('#example').DataTable({
           searchPanes: {
             layout: 'columns-2'
           },
-          dom: 'Plfrtip',
+         
           columnDefs: [{
               searchPanes: {
                 show: true
@@ -577,11 +578,22 @@
               },
               targets: [2, 3]
             }
-          ]
+          ],
+          dom: 'BPlfrtip',
+
+          buttons: [
+        {
+            extend: 'excel',
+            text: 'Save current page',
+            autoFilter: true,
+
+        }
+    ]
         });
+
       });
-      table.searchPanes.container().prependTo(table.table().container());
-      table.searchPanes.resizePanes();
+   
+   
     </script>
     <style>
       .datacard {
