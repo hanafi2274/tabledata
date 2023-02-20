@@ -16,4 +16,6 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-Route.on('/').render('index')
+// Route.on('/').render('index')
+Route.get("/", "SirupController.index");
+Route.get("/preview/:value", "SirupController.getData");
