@@ -18,4 +18,4 @@ const Route = use('Route')
 
 // Route.on('/').render('index')
 Route.get("/", "SirupController.index");
-Route.get("/preview/:value", "SirupController.getData");
+Route.get("/preview/:value?", "SirupController.getData");
