@@ -31,36 +31,36 @@
               </div>
             </div>
           </div>
-          <div id="analytics" class="row d-flex justify-content-between ml-3 mr-3">
+          <div id="analytics" class="row d-flex justify-content-between  ml-3 mr-3">
             <div class="datacard" style="margin:10px;">
               <p class="cardtitle">KLPD : </p>
-              <div class="d-block" style="width:300px">
-                <p class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
-                  style="white-space: nowrap; display: inline-block; font-size: 80px;">0</p><span
+              <div class="d-block" style="width:350px;">
+                <p id="kldi" class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
+                  style="white-space: nowrap; display: inline-block; font-size: 30px;">0</p><span
                   class="lead nowrap"></span>
               </div>
             </div>
             <div class="datacard" style="margin:10px;">
               <p class="cardtitle">Paket : </p>
-              <div class="d-block" style="width:300px">
-                <p class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
-                  style="white-space: nowrap; display: inline-block; font-size: 80px;">0</p><span
+              <div class="d-block" style="width:350px;">
+                <p id="paket" class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
+                  style="white-space: nowrap; display: inline-block; font-size: 30px;">0</p><span
                   class="lead nowrap"></span>
               </div>
             </div>
 
             <div class="datacard" style="margin:10px;">
               <p class="cardtitle">Pagu : </p>
-              <div class="d-block" style="width:300px">
-                <p class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
-                  style="white-space: nowrap; display: inline-block; font-size: 80px;">0</p><span
+              <div class="d-block" style="width:350px;">
+                <p id="pagu" class="fityyi7jn display-4 font-weight-bold mt-4 mb-1 mr-2"
+                  style="white-space: nowrap; display: inline-block; font-size: 30px;">0</p><span
                   class="lead nowrap"></span>
               </div>
             </div>
 
             <div class="datacard" style="margin:10px;">
               <p class="cardtitle">Chart Radar : </p>
-              <div class="d-block" style="width:300px">
+              <div class="d-block" style="width:350px;">
                   <div id="dashboard-data" class="row"></div>
               </div>
             </div>
@@ -90,8 +90,6 @@
       var tempDate = nowDate.getDate() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getFullYear() + ' ' + nowDate
         .getHours() + ':' + nowDate.getMinutes() + ':' + nowDate.getSeconds()
       async function getData() {
-        var tbody = document.getElementById('tbody')
-
         var tempQuery = $('#query').val()
         if (tempQuery) {
 
@@ -108,7 +106,15 @@
         loading()
         await axios.get( send ? '/preview/'+send:'/preview/').then(async (x) => {
           var tempresult = []
+          var pagu=0
           let rupiah = new Intl.NumberFormat('id-ID');
+          var savedResult=x.data
+          var paketTemp=x.data.map((x)=>x.paket)
+          var klpd=x.data.map((x)=>x.kldi)
+          var unique = paketTemp.filter((value, index, array) => array.indexOf(value) === index);
+          var uniqueKldi = klpd.filter((value, index, array) => array.indexOf(value) === index);
+
+          
           for (let index = 0; index < x.data.length; index++) {
 
             delete x.data[index].idBulan
@@ -121,7 +127,7 @@
             let tempPerdata = {
 
             }
-
+            pagu+=Number(x.data[index].pagu)
             tempPerdata.no = index + 1
             tempPerdata.paket = x.data[index].paket
             tempPerdata.pagu = rupiah.format(x.data[index].pagu)
@@ -172,11 +178,14 @@
             }
             newsData.push(temps)
         }
+        console.log(pagu);
+        $('#pagu').html('Rp.'+rupiah.format(pagu))
+        $('#paket').html(unique.length)
+        $('#kldi').html(uniqueKldi.length)
         initiate.clear()
         $('#example').DataTable().row(0).remove();
         initiate.rows.add( newsData ).draw()
-
-    $('#example').DataTable().searchPanes.rebuildPane();
+        $('#example').DataTable().searchPanes.rebuildPane();
           if(x.data){
 
         //   initiate.destroy();
