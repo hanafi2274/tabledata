@@ -104,17 +104,17 @@
           var send = ""
         }
         loading()
-        await axios.get( send ? '/preview/'+send:'/preview/').then(async (x) => {
+        await axios.get(send ? '/preview/' + send : '/preview/').then(async (x) => {
           var tempresult = []
-          var pagu=0
+          var pagu = 0
           let rupiah = new Intl.NumberFormat('id-ID');
-          var savedResult=x.data
-          var paketTemp=x.data.map((x)=>x.paket)
-          var klpd=x.data.map((x)=>x.kldi)
+          var savedResult = x.data
+          var paketTemp = x.data.map((x) => x.paket)
+          var klpd = x.data.map((x) => x.kldi)
           var unique = paketTemp.filter((value, index, array) => array.indexOf(value) === index);
           var uniqueKldi = klpd.filter((value, index, array) => array.indexOf(value) === index);
 
-          
+
           for (let index = 0; index < x.data.length; index++) {
 
             delete x.data[index].idBulan
@@ -127,80 +127,117 @@
             let tempPerdata = {
 
             }
-            pagu+=Number(x.data[index].pagu)
+            pagu += Number(x.data[index].pagu)
             tempPerdata.no = index + 1
             tempPerdata.paket = x.data[index].paket
             tempPerdata.pagu = rupiah.format(x.data[index].pagu)
             tempPerdata.jenisPengadaan = x.data[index].jenisPengadaan
-            if (x.data[index].isPDN == true) {
-              tempPerdata.isPDN = "Produk Dalam Negeri"
 
+            if (x.data[index].isPDN) {
+              if (x.data[index].isPDN == true) {
+                tempPerdata.isPDN = "Produk Dalam Negeri"
+              } else {
+                tempPerdata.isPDN = "Produk Impor"
+              }
             } else {
-              tempPerdata.isPDN = "Produk Impor"
-
+              tempPerdata.isPDN = '-'
             }
-            if (x.data[index].isUMK == true) {
-              tempPerdata.isUMK = "Usaha Kecil/Koperasi"
 
+            if (x.data[index].isUMK) {
+              if (x.data[index].isUMK == true) {
+                tempPerdata.isUMK = "Usaha Kecil/Koperasi"
+
+              } else {
+                tempPerdata.isUMK = "Bukan Usaha Kecil/Koperasi"
+
+              }
             } else {
-              tempPerdata.isUMK = "Bukan Usaha Kecil/Koperasi"
-
+              tempPerdata.isUMK = '-'
             }
-            tempPerdata.metode = x.data[index].metode
-            tempPerdata.pemilihan = x.data[index].pemilihan
-            tempPerdata.kldi = x.data[index].kldi
-            tempPerdata.satuanKerja = x.data[index].satuanKerja
-            if(x.data[index].lokasi){
 
-                tempPerdata.lokasi = x.data[index].lokasi
-            }else{
-                tempPerdata.lokasi ='-'
+
+            if (x.data[index].metode) {
+              tempPerdata.metode = x.data[index].metode
+            } else {
+              tempPerdata.metode = '-'
             }
-            tempPerdata.id = x.data[index].id
+
+            if (x.data[index].pemilihan) {
+              tempPerdata.pemilihan = x.data[index].pemilihan
+            } else {
+              tempPerdata.pemilihan = '-'
+            }
+
+            if (x.data[index].kldi) {
+              tempPerdata.kldi = x.data[index].kldi
+            } else {
+              tempPerdata.kldi = '-'
+            }
+
+            if (x.data[index].satuanKerja) {
+              tempPerdata.satuanKerja = x.data[index].satuanKerja
+            } else {
+              tempPerdata.satuanKerja = '-'
+            }
+
+            if (x.data[index].lokasi) {
+
+              tempPerdata.lokasi = x.data[index].lokasi
+            } else {
+              tempPerdata.lokasi = '-'
+            }
+
+            if (x.data[index].id) {
+
+              tempPerdata.id = x.data[index].id
+            } else {
+              tempPerdata.id = '-'
+            }
+
             // console.log(tempPerdata)
             tempresult.push(tempPerdata)
 
           }
-        //   for (let i = 0; i < tempresult.length; i++) {
-            // var key = Object.keys(tempresult[i])
-        //     let tr = tbody.insertRow();
-        //     for (let j = 0; j < 12; j++) {
-        //       let td = tr.insertCell();
-        //       td.appendChild(document.createTextNode(tempresult[i][key[j]]));
-        //     }
-        //   }
-          var newsData=[]
+          //   for (let i = 0; i < tempresult.length; i++) {
+          // var key = Object.keys(tempresult[i])
+          //     let tr = tbody.insertRow();
+          //     for (let j = 0; j < 12; j++) {
+          //       let td = tr.insertCell();
+          //       td.appendChild(document.createTextNode(tempresult[i][key[j]]));
+          //     }
+          //   }
+          var newsData = []
           for (let i = 0; i < tempresult.length; i++) {
             var key = Object.keys(tempresult[i])
-           let temps=[]
+            let temps = []
             for (let j = 0; j < 12; j++) {
-               temps.push(tempresult[i][key[j]])
+              temps.push(tempresult[i][key[j]])
             }
             newsData.push(temps)
-        }
-        console.log(pagu);
-        $('#pagu').html('Rp.'+rupiah.format(pagu))
-        $('#paket').html(unique.length)
-        $('#kldi').html(uniqueKldi.length)
-        initiate.clear()
-        $('#example').DataTable().row(0).remove();
-        initiate.rows.add( newsData ).draw()
-        $('#example').DataTable().searchPanes.rebuildPane();
-          if(x.data){
+          }
+          console.log(pagu);
+          $('#pagu').html('Rp.' + rupiah.format(pagu))
+          $('#paket').html(unique.length)
+          $('#kldi').html(uniqueKldi.length)
+          initiate.clear()
+          $('#example').DataTable().row(0).remove();
+          initiate.rows.add(newsData).draw()
+          $('#example').DataTable().searchPanes.rebuildPane();
+          if (x.data) {
 
-        //   initiate.destroy();
-      
-          Swal.close()
+            //   initiate.destroy();
 
-        }else{
-          Swal.close()
+            Swal.close()
+
+          } else {
+            Swal.close()
 
             Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Something went wrong!'
-          })
-        }
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!'
+            })
+          }
 
         }).catch(err => {
           console.log(err)
@@ -214,79 +251,102 @@
       }
 
       function loading() {
-    Swal.fire({
-      html: '<h3 class="mb-0  text-bold text-sm animate-flicker" style="overflow:hidden">LOADING DATA</h3>',
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      width: 250
-    })
-  }
-  initiate = $('#example').DataTable({
-    columns: [
-            { title: 'No' },
-            { title: 'Paket' },
-            { title: 'Pagu(Rp)' },
-            { title: 'Jenis Pengadaan.' },
-            { title: 'Produk Dalam Negeri' },
-            { title: 'Usaha Kecil/Koperasi' },
-            { title: 'Metode' },
-            { title: 'Pemilihan' },
-            { title: 'K/L/PD' },
-            { title: 'Satuan Kerja' },
-            { title: 'Lokasi' },
-            { title: 'ID' },
+        Swal.fire({
+          html: '<h3 class="mb-0  text-bold text-sm animate-flicker" style="overflow:hidden">LOADING DATA</h3>',
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          width: 250
+        })
+      }
+      initiate = $('#example').DataTable({
+        columns: [{
+            title: 'No'
+          },
+          {
+            title: 'Paket'
+          },
+          {
+            title: 'Pagu(Rp)'
+          },
+          {
+            title: 'Jenis Pengadaan.'
+          },
+          {
+            title: 'Produk Dalam Negeri'
+          },
+          {
+            title: 'Usaha Kecil/Koperasi'
+          },
+          {
+            title: 'Metode'
+          },
+          {
+            title: 'Pemilihan'
+          },
+          {
+            title: 'K/L/PD'
+          },
+          {
+            title: 'Satuan Kerja'
+          },
+          {
+            title: 'Lokasi'
+          },
+          {
+            title: 'ID'
+          },
         ],
         data: null,
+        searchPanes: {
+          layout: 'columns-2'
+        },
+        scrollX: true,
+        columnDefs: [{
+
             searchPanes: {
-              layout: 'columns-2'
+              show: true
             },
-            scrollX: true,
-            columnDefs: [{
-                
-                searchPanes: {
-                  show: true
-                },
-                targets: [1, 3, 6, 7, 8, 9, 10, 11]
-              },
-              {
-                searchPanes: {
-                  show: false
-                },
-                targets: [2, 4, 5]
-              }
-            ],
-            dom: 'BPlfrtip',
+            targets: [1, 3, 6, 7, 8, 9, 10, 11]
+          },
+          {
+            searchPanes: {
+              show: false
+            },
+            targets: [2, 4, 5]
+          }
+        ],
+        dom: 'BPlfrtip',
 
-            buttons: [{
-                title: 'RUP - Cari Paket Penyedia',
-                extend: 'excel',
-                text: '<i class="fas fa-file-excel mr-1"></i> Export Excel ',
-                className: 'btn-sm btn-success',
-                autoFilter: true,
-                messageTop: 'Data yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
-                  tempDate +
-                  '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id'
-              },
-              {
-                title: 'RUP - Cari Paket Penyedia',
-                extend: 'pdf',
-                text: '<i class="fas fa-file-pdf mr-1"></i> Export PDF',
-                className: 'btn-sm btn-danger',
-                autoFilter: true,
-                orientation: 'landscape',
-                messageTop: ' Data yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
-                  tempDate +
-                  '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id',
+        buttons: [{
+            title: 'RUP - Cari Paket Penyedia',
+            extend: 'excel',
+            text: '<i class="fas fa-file-excel mr-1"></i> Export Excel ',
+            className: 'btn-sm btn-success',
+            autoFilter: true,
+            messageTop: 'Data yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
+              tempDate +
+              '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id'
+          },
+          {
+            title: 'RUP - Cari Paket Penyedia',
+            extend: 'pdf',
+            text: '<i class="fas fa-file-pdf mr-1"></i> Export PDF',
+            className: 'btn-sm btn-danger',
+            autoFilter: true,
+            orientation: 'landscape',
+            messageTop: ' Data yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
+              tempDate +
+              '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id',
 
 
-              }
-            ]
-          });
-        //   initiate= $('#example').DataTable({
+          }
+        ]
+      });
+      //   initiate= $('#example').DataTable({
 
-        //         dom: 'lfrtip',
+      //         dom: 'lfrtip',
 
-        //       });
+      //       });
 
       // var radar={
 
