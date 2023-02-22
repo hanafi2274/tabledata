@@ -1,7 +1,14 @@
 'use strict'
 const axios = require('axios');
 const moment = require('moment');
+const DataMongo = use("App/Models/Mongo/ExternalData")
 class SirupController {
+    async testing ({request,response}){
+        // const a =  await DataMongo.getData()
+        console.log(await DataMongo.getData());
+        return response.json({status:'success',})
+    }
+
     async index ({ request, view, response, auth }){
 // var value
 // var config = {
