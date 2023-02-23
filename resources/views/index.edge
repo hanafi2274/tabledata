@@ -9,16 +9,16 @@
             {{--  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>  --}}
 
             <div class="row datacard m-1">
-              <div class="form-group col ">
+              <div class="form-group col-md-7 ">
                 <label style="font-size:29px; font-weight:700;"> Query</label>
                 <input class="tagify " type="text" placeholder="Enter Query" name="query" id="query" required>
                 <div style="margin-top:10px;">
                   <button type="button" onclick="getData()" class="btn btn-info">Preview</button>
-                  <button type="button" class="btn btn-success">Add Query</button>
+                  <button type="button" onclick="addQuery()" class="btn btn-success">Add Query</button>
                 </div>
               </div>
 
-              <div class="ml-2 col-6"style="max-width:100%; max-height:153px !important; overflow: auto; font-size:12px;">
+              <div class="ml-2 col-md"style="max-width:100%; max-height:153px !important; overflow: auto; font-size:12px;">
                 <table id="queryData" class="table  nowrap">
                   <thead>
                     <tr>
@@ -28,20 +28,22 @@
                     </tr>
                   </thead>
                   <tbody>
+                    @each((data,index) in data[0].query)
                     <tr>
-                      <th>1</th>
-                      <th>videotron,video,dokumentasi</th>
+                      <th>{{index+1}}</th>
+                      <th>{{data.keywords}}</th>
                       <th>
-                        <div class="col ">
-                            <div class="float-right">
-                              <a href="#" onclick="openFeed({{subdata.group_id}},{{subdata.id}})"
-                                class="btn btn-sm btn-dark mr-2 "  style="font-size:12px"><i class="fas fa-table mr-2 "></i>Preview</a>
-                              <a href="#" onclick="deleteConfirm('{{page.route}}/deleteQueries/{{subdata.group_id}}/{{subdata.id}}')"
-                                class="btn btn-sm btn-danger " style="font-size:12px"><i class="fas fa-trash-alt mr-2"></i>Delete</a>
+                        <div class=" ">
+                            <div class="">
+                              <a href="#" onclick=""
+                                class="btn btn-sm btn-dark mr-2 "  style="font-size:12px;width:90px"><i class="fas fa-table mr-2 fa-sm"></i>Preview</a>
+                              <a href="#" onclick="deleteConfirm('/delQuery/{{data.id}}')"
+                                class="btn btn-sm btn-danger " style="font-size:12px"><i class="fas fa-trash-alt mr-2 fa-sm"></i>Delete</a>
                             </div>
                           </div>
                       </th>
                     </tr>
+                    @endeach
                   </tbody>
                 </table>
               </div>
@@ -110,6 +112,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fitty/2.2.6/fitty.min.js" integrity="sha512-KkWBcUQjpR0NMNLytOBHfEqSF0urYJMXGRU/dzQxa+HQ4zak1gRSoegRvRnUcCFWBPcDIlLU7tBY8o7+bIkvWA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
+          var data={{{toJSON(data)}}};
            var dom = document.getElementById('chart-container');
            var myChart = echarts.init(dom, null, {
              renderer: 'canvas',
@@ -117,11 +120,8 @@
            });
 
            var option;
-
-
-
-           var base64String
-           var element = document.getElementById("analytics");
+        //    var base64String
+        //    var element = document.getElementById("analytics");
            var initiate, temp = false
            $('select > option:first').hide()
            var queryTagify = document.getElementById('query')
@@ -130,8 +130,89 @@
            var nowDate = new Date()
            var tempDate = nowDate.getDate() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getFullYear() + ' ' + nowDate
              .getHours() + ':' + nowDate.getMinutes() + ':' + nowDate.getSeconds()
+
+           async function addQuery(){
+            if($('#query').val()){
+                var tempQueryValue=[]
+                let resultQuery= JSON.parse($('#query').val())
+                for (let index = 0; index < resultQuery.length; index++) {
+                    tempQueryValue.push(resultQuery[index].value)
+                    // console.log(resultQuery[index].value);
+                }
+                var send=tempQueryValue.join()
+                // console.log(tempQueryValue.join());
+                await axios.get('addQuery/'+send).then(async (x) => {
+                    if(x){
+                        Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Add query success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast:true,
+
+                    }).then(function(){
+                        location.reload();
+                    })
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!'
+                        })
+                    }
+                    
+                 
+                }).catch(err => {
+            //   console.log(err)
+              Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!'
+                })
+                })
+                }
+                else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Query is Empty!'
+                })
+                }
+           }
+           function deleteConfirm(callback) {
+                Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: !0,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                if (result.value) {
+                    loading()
+                    if (typeof callback == 'string') window.location = callback;
+                    else callback()
+                }
+                })
+            }
+           async function deleteData(id){
+            await axios.get('/delQuery/'+id).then(async (x) => {
+                // console.log(x);
+            }).catch(err => {
+            //    console.log(err)
+               Swal.close()
+               Swal.fire({
+                 icon: 'error',
+                 title: 'Oops...',
+                 text: 'Something went wrong!'
+               })
+             })
+           }
+
            async function getData() {
-             var tempQuery = $('#query').val()
+            var tempQuery = $('#query').val()
              if (tempQuery) {
 
                var tempValue = JSON.parse(tempQuery)
@@ -150,7 +231,7 @@
                var pagu = 0
                let rupiah = new Intl.NumberFormat('id-ID');
                var savedResult = x.data
-               console.log(savedResult);
+            //    console.log(savedResult);
                var paketTemp = x.data.map((x) => x.paket)
                var klpd = x.data.map((x) => x.kldi)
                var pemilihan = x.data.map((x) => x.pemilihan)
@@ -161,7 +242,7 @@
                  radarName.push({
                    text: pemilihanUnique[index]
                  })
-                 console.log(x.data.length);
+                //  console.log(x.data.length);
 
                  var tempValues = 0
                  for (let i = 0; i < x.data.length; i++) {
@@ -293,7 +374,7 @@
                initiate.rows.add(newsData).draw()
                $('#example').DataTable().searchPanes.rebuildPane();
                if (x.data) {
-                 console.log(radarValue);
+                //  console.log(radarValue);
                  option = {
 
                     tooltip: {
@@ -335,10 +416,6 @@
                  }
 
                  window.addEventListener('resize', myChart.resize);
-
-
-
-
                  Swal.close()
 
                } else {
@@ -350,19 +427,19 @@
                    text: 'Something went wrong!'
                  })
                }
-               html2canvas(element).then(function (canvas) {
-                 canvas.toBlob(function (blob) {
-                   var reader = new FileReader();
-                   reader.readAsDataURL(blob);
-                   reader.onloadend = async function () {
-                     base64String = await reader.result;
+            //    html2canvas(element).then(function (canvas) {
+            //      canvas.toBlob(function (blob) {
+            //        var reader = new FileReader();
+            //        reader.readAsDataURL(blob);
+            //        reader.onloadend = async function () {
+            //          base64String = await reader.result;
 
-                   }
-                 });
-               });
+            //        }
+            //      });
+            //    });
 
              }).catch(err => {
-               console.log(err)
+            //    console.log(err)
                Swal.close()
                Swal.fire({
                  icon: 'error',
@@ -463,15 +540,15 @@
                  messageTop: ' Data yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
                    tempDate +
                    '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id',
-                 customize: async function (doc) {
-                   // console.log(base64String);
+                //  customize: async function (doc) {
+                //    // console.log(base64String);
 
-                   doc.content.splice(1, 0, {
-                     margin: [0, 0, 0, 12],
-                     alignment: 'center',
-                     image: '"' + await base64String + '"',
-                   });
-                 }
+                //    doc.content.splice(1, 0, {
+                //      margin: [0, 0, 0, 12],
+                //      alignment: 'center',
+                //      image: '"' + await base64String + '"',
+                //    });
+                //  }
 
                }, {
                  text: '<i class="fas fa-filter"></i> Filters',
@@ -678,12 +755,12 @@
         border-radius: 4px;
         transition: .1s
       }
-     #queryData > thead > tr > th {
-  position: sticky;
-  top: 0;
-  background:  rgba(255,0,0,.7);
-  color: white;
-  z-index: 1000;
-}
+     /* #queryData > thead > tr > th {
+        position: sticky;
+        top: 0;
+        background:  rgba(255,0,0,1);
+        color: white;
+        z-index: 1000;
+    } */
     </style>
     @endsection

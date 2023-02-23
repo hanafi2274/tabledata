@@ -45,6 +45,7 @@
 
 <body class="slimscroll"
   style="background:#f5f6fa; background-image: linear-gradient(rgba(255,0,0,0),rgba(255,0,0,1));">
+
   <div class="content-wrapper">
     @!section('content')
   </div>
@@ -52,7 +53,17 @@
 
 </html>
 
-
+<script>
+    $(function () {
+        const Toast = Swal.mixin({toast: true,position: 'top-end',showConfirmButton: false,timer: 4000});
+      @if(flashMessage('msgSuccess'))
+        Toast.fire({type: 'success',title: '{{{ flashMessage('msgSuccess') }}}'})
+      @endif
+      @if(flashMessage('msgError'))
+        Toast.fire({type: 'warning',title: '{{{ flashMessage('msgError') }}}'})
+      @endif
+    })
+</script>
 <style>
   .slimscroll::-webkit-scrollbar {
     height: 12px;

@@ -1,4 +1,5 @@
 'use strict'
+const Env = use('Env')
 
 const Task = use('Task')
 
@@ -8,7 +9,7 @@ class Coba extends Task {
   }
 
   async handle () {
-    this.info('Task Coba handle')
+    console.log(Env.get('MONGO_URL'))
   }
 }
 
