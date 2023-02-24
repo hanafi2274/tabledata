@@ -44,10 +44,15 @@ class ExternalDataMongo {
     async updatedData(id,data){
         return  await collections.updateOne({_id : (id)},{ $set:{ updated_at : new Date()}, $push: { "query": {$each : data} } })
     }
-    async deleteData(id,data){
+    async deleteQueryData(id,data){
         return  await collections.updateOne({_id : (id)}, {$set:{ updated_at : new Date()},$pull: {"query": {id:data}}})
     }
-
+    async deleteDataTable(id){
+        return  await collections.deleteOne({idQuery : (id)})
+    }
+    async updateDataTable(id,data){
+        return  await collections.updateOne({idQuery : (id)},{ $set:{ updated_at : new Date(),data:data}  })
+    }
 }
 
 module.exports = new ExternalDataMongo()

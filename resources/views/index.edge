@@ -1,7 +1,7 @@
     @layout('layouts.main')
     @section('content')
     <section class="slimscroll" style="color:#212529;">
-      <div class="">
+      <div class="m-3">
         <div class="card " style="background:RGBA(245,246,250,0.6 );  border: none !important;">
           {{--  <h5 class="card-header" style="font-weight:700;">DATA TABLE</h5>  --}}
           <div class="card-body ">
@@ -35,7 +35,7 @@
                       <th>
                         <div class=" ">
                             <div class="">
-                              <a href="#" onclick=""
+                              <a href="#" onclick="previewDataList({{data.id}})"
                                 class="btn btn-sm btn-dark mr-2 "  style="font-size:12px;width:90px"><i class="fas fa-table mr-2 fa-sm"></i>Preview</a>
                               <a href="#" onclick="deleteConfirm('/delQuery/{{data.id}}')"
                                 class="btn btn-sm btn-danger " style="font-size:12px"><i class="fas fa-trash-alt mr-2 fa-sm"></i>Delete</a>
@@ -97,6 +97,8 @@
           </div>
           <div class="m-4 mt-3 datacard">
             <table id="example" class="table table-striped responsive  table-bordered nowrap" style="width:100%;">
+                <h6 id="date"></h6>
+                <h4 id="title"></h4>
 
             </table>
           </div>
@@ -118,6 +120,9 @@
              renderer: 'canvas',
              useDirtyRect: false
            });
+           const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+           $('#title').html('')
+               $('#date').html('')
 
            var option;
         //    var base64String
@@ -127,107 +132,32 @@
            var queryTagify = document.getElementById('query')
            new Tagify(queryTagify)
            var table, arrColumn = []
-           var nowDate = new Date()
-           var tempDate = nowDate.getDate() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getFullYear() + ' ' + nowDate
+           var nowDate 
+           var tempDate ,keys
+           async function previewDataList(id){
+            loading()
+            await axios.get('previewData/'+id).then(async (y) => {
+                let x=y.data[0]
+                let date= new Date(x.updated_at)
+               
+                nowDate=date
+                tempDate = nowDate.getDate() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getFullYear() + ' ' + nowDate
              .getHours() + ':' + nowDate.getMinutes() + ':' + nowDate.getSeconds()
+                console.log(tempDate);
+             messagePdf(tempDate)
 
-           async function addQuery(){
-            if($('#query').val()){
-                var tempQueryValue=[]
-                let resultQuery= JSON.parse($('#query').val())
-                for (let index = 0; index < resultQuery.length; index++) {
-                    tempQueryValue.push(resultQuery[index].value)
-                    // console.log(resultQuery[index].value);
-                }
-                var send=tempQueryValue.join()
-                // console.log(tempQueryValue.join());
-                await axios.get('addQuery/'+send).then(async (x) => {
-                    if(x){
-                        Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Add query success',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    toast:true,
-
-                    }).then(function(){
-                        location.reload();
-                    })
-                    }else{
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong!'
-                        })
+                let title
+                for (let index = 0; index < data[0].query.length; index++) {
+                    if(data[0].query[index].id==y.data[0].idQuery){
+                        title=data[0].query[index].keywords
+                        break;
                     }
-                    
-                 
-                }).catch(err => {
-            //   console.log(err)
-              Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong!'
-                })
-                })
+
                 }
-                else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Query is Empty!'
-                })
-                }
-           }
-           function deleteConfirm(callback) {
-                Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                type: 'warning',
-                showCancelButton: !0,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                if (result.value) {
-                    loading()
-                    if (typeof callback == 'string') window.location = callback;
-                    else callback()
-                }
-                })
-            }
-           async function deleteData(id){
-            await axios.get('/delQuery/'+id).then(async (x) => {
-                // console.log(x);
-            }).catch(err => {
-            //    console.log(err)
-               Swal.close()
-               Swal.fire({
-                 icon: 'error',
-                 title: 'Oops...',
-                 text: 'Something went wrong!'
-               })
-             })
-           }
-
-           async function getData() {
-            var tempQuery = $('#query').val()
-             if (tempQuery) {
-
-               var tempValue = JSON.parse(tempQuery)
-               var send = []
-
-               for (let index = 0; index < tempValue.length; index++) {
-                 send.push(tempValue[index].value)
-               }
-
-             } else {
-               var send = ""
-             }
-             loading()
-             await axios.get(send ? '/preview/' + send : '/preview/').then(async (x) => {
-               var tempresult = []
+                keys=title
+                $('#title').html(title)
+                $('#date').html(date.getDate()+' '+ month[date.getMonth()]+' '+date.getFullYear()+'   '+date.getHours()+':'+date.getMinutes())
+                var tempresult = []
                var pagu = 0
                let rupiah = new Intl.NumberFormat('id-ID');
                var savedResult = x.data
@@ -438,6 +368,329 @@
             //      });
             //    });
 
+                }).catch(err => {
+              console.log(err)
+              Swal.close()
+
+                })
+           }
+           async function addQuery(){
+            loading()
+            if($('#query').val()){
+                var tempQueryValue=[]
+                let resultQuery= JSON.parse($('#query').val())
+                for (let index = 0; index < resultQuery.length; index++) {
+                    tempQueryValue.push(resultQuery[index].value)
+                    // console.log(resultQuery[index].value);
+                }
+                var send=tempQueryValue.join()
+                // console.log(tempQueryValue.join());
+                await axios.get('addQuery/'+send).then(async (x) => {
+                    if(x){
+                        Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Add query success',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast:true,
+
+                    }).then(function(){
+                        location.reload();
+                    })
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!'
+                        })
+                    }
+                    
+                 
+                }).catch(err => {
+            //   console.log(err)
+              Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong!'
+                })
+                })
+                }
+                else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Query is Empty!'
+                })
+                }
+           }
+           function deleteConfirm(callback) {
+                Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: !0,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                if (result.value) {
+                    loading()
+                    if (typeof callback == 'string') window.location = callback;
+                    else callback()
+                }
+                })
+            }
+           async function deleteData(id){
+            await axios.get('/delQuery/'+id).then(async (x) => {
+                // console.log(x);
+            }).catch(err => {
+            //    console.log(err)
+               Swal.close()
+               Swal.fire({
+                 icon: 'error',
+                 title: 'Oops...',
+                 text: 'Something went wrong!'
+               })
+             })
+           }
+
+           async function getData() {
+            var tempQuery = $('#query').val()
+            let dates=new Date()
+            nowDate=dates
+            tempDate = nowDate.getDate() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getFullYear() + ' ' + nowDate
+             .getHours() + ':' + nowDate.getMinutes() + ':' + nowDate.getSeconds()
+             messagePdf(tempDate)
+             if (tempQuery) {
+
+               var tempValue = JSON.parse(tempQuery)
+               var send = []
+
+               for (let index = 0; index < tempValue.length; index++) {
+                 send.push(tempValue[index].value)
+               }
+               keys=send.join()
+               $('#title').html(send.join())
+               $('#date').html(dates.getDate()+' '+ month[dates.getMonth()]+' '+dates.getFullYear()+'   '+dates.getHours()+':'+dates.getMinutes())
+             } else {
+               var send = ""
+             }
+             loading()
+             await axios.get(send ? '/preview/' + send : '/preview/').then(async (x) => {
+              
+            
+               var tempresult = []
+               var pagu = 0
+               let rupiah = new Intl.NumberFormat('id-ID');
+               var savedResult = x.data
+            //    console.log(savedResult);
+               var paketTemp = x.data.map((x) => x.paket)
+               var klpd = x.data.map((x) => x.kldi)
+               var pemilihan = x.data.map((x) => x.pemilihan)
+               var pemilihanUnique = pemilihan.filter((value, index, array) => array.indexOf(value) === index);
+               var radarName = []
+               var radarValue = []
+               for (let index = 0; index < pemilihanUnique.length; index++) {
+                 radarName.push({
+                   text: pemilihanUnique[index]
+                 })
+                //  console.log(x.data.length);
+
+                 var tempValues = 0
+                 for (let i = 0; i < x.data.length; i++) {
+                   if (x.data[i].pemilihan == pemilihanUnique[index]) {
+                     tempValues += x.data[i].pagu
+
+                   }
+                 }
+                 radarValue.push(tempValues)
+               }
+               for (let index = 0; index < x.data.length; index++) {
+
+                 delete x.data[index].idBulan
+                 delete x.data[index].idlokasi
+                 delete x.data[index].idKldi
+                 delete x.data[index].id_referensi
+                 delete x.data[index].idMetode
+                 delete x.data[index].idJenisPengadaan
+
+                 let tempPerdata = {
+
+                 }
+                 pagu += Number(x.data[index].pagu)
+                 tempPerdata.no = index + 1
+                 tempPerdata.paket = x.data[index].paket
+                 tempPerdata.pagu = rupiah.format(x.data[index].pagu)
+                 tempPerdata.jenisPengadaan = x.data[index].jenisPengadaan
+
+                 // if (x.data[index].isPDN) {
+                 if (x.data[index].isPDN == true) {
+                   tempPerdata.isPDN = "Produk Dalam Negeri"
+                 } else {
+                   tempPerdata.isPDN = "Produk Impor"
+                 }
+                 // } else {
+                 //   tempPerdata.isPDN = '-'
+                 // }
+
+                 // if (x.data[index].isUMK) {
+                 if (x.data[index].isUMK == true) {
+                   tempPerdata.isUMK = "Usaha Kecil/Koperasi"
+
+                 } else {
+                   tempPerdata.isUMK = "Bukan Usaha Kecil/Koperasi"
+
+                 }
+                 // } else {
+                 //   tempPerdata.isUMK = '-'
+                 // }
+
+
+                 if (x.data[index].metode) {
+                   tempPerdata.metode = x.data[index].metode
+                 } else {
+                   tempPerdata.metode = '-'
+                 }
+
+                 if (x.data[index].pemilihan) {
+                   tempPerdata.pemilihan = x.data[index].pemilihan
+                 } else {
+                   tempPerdata.pemilihan = '-'
+                 }
+
+                 if (x.data[index].kldi) {
+                   tempPerdata.kldi = x.data[index].kldi
+                 } else {
+                   tempPerdata.kldi = '-'
+                 }
+
+                 if (x.data[index].satuanKerja) {
+                   tempPerdata.satuanKerja = x.data[index].satuanKerja
+                 } else {
+                   tempPerdata.satuanKerja = '-'
+                 }
+
+                 if (x.data[index].lokasi) {
+
+                   tempPerdata.lokasi = x.data[index].lokasi
+                 } else {
+                   tempPerdata.lokasi = '-'
+                 }
+
+                 if (x.data[index].id) {
+
+                   tempPerdata.id = x.data[index].id
+                 } else {
+                   tempPerdata.id = '-'
+                 }
+
+                 // console.log(tempPerdata)
+                 tempresult.push(tempPerdata)
+
+               }
+               //   for (let i = 0; i < tempresult.length; i++) {
+               // var key = Object.keys(tempresult[i])
+               //     let tr = tbody.insertRow();
+               //     for (let j = 0; j < 12; j++) {
+               //       let td = tr.insertCell();
+               //       td.appendChild(document.createTextNode(tempresult[i][key[j]]));
+               //     }
+               //   }
+               var newsData = []
+               for (let i = 0; i < tempresult.length; i++) {
+                 var key = Object.keys(tempresult[i])
+                 let temps = []
+                 for (let j = 0; j < 12; j++) {
+                   temps.push(tempresult[i][key[j]])
+                 }
+                 newsData.push(temps)
+               }
+               //   console.log(pagu);
+               $('#pagu').html('Rp.' + rupiah.format(pagu))
+               $('#paket').html(rupiah.format(paketTemp.length))
+               $('#kldi').html(rupiah.format(klpd.length))
+               fitty('#pagu', {
+                 minSize: 10,
+                 maxSize: 50,
+               });
+               fitty('#paket', {
+                 minSize: 10,
+                 maxSize: 50,
+               });
+               fitty('#kldi', {
+                 minSize: 10,
+                 maxSize: 50,
+               });
+               initiate.clear()
+               $('#example').DataTable().row(0).remove();
+               initiate.rows.add(newsData).draw()
+               $('#example').DataTable().searchPanes.rebuildPane();
+               if (x.data) {
+                //  console.log(radarValue);
+                 option = {
+
+                    tooltip: {
+                         trigger: 'item',
+                         appendToBody: true
+                       },
+                   legend: {
+                     left: 'center',
+                     data: [
+                       'Pemilihan',
+                     ]
+                   },
+                   radar: [
+
+                     {
+                       indicator: radarName,
+                       radius: 70,
+                       center: ['50%', '50%']
+                     }
+                   ],
+                   series: [
+
+                     {
+                       type: 'radar',
+                       areaStyle: {},
+                       
+                       data: [{
+                           value: radarValue,
+                           name: 'Pemilihan'
+                         },
+
+                       ]
+                     }
+                   ]
+                 };
+
+                 if (option && typeof option === 'object') {
+                   myChart.setOption(option);
+                 }
+
+                 window.addEventListener('resize', myChart.resize);
+                 Swal.close()
+
+               } else {
+                 Swal.close()
+
+                 Swal.fire({
+                   icon: 'error',
+                   title: 'Oops...',
+                   text: 'Something went wrong!'
+                 })
+               }
+            //    html2canvas(element).then(function (canvas) {
+            //      canvas.toBlob(function (blob) {
+            //        var reader = new FileReader();
+            //        reader.readAsDataURL(blob);
+            //        reader.onloadend = async function () {
+            //          base64String = await reader.result;
+
+            //        }
+            //      });
+            //    });
+
              }).catch(err => {
             //    console.log(err)
                Swal.close()
@@ -457,6 +710,13 @@
                allowOutsideClick: false,
                width: 250
              })
+           }
+           function messagePdf(date){
+           let result= ' Data yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
+                   date +
+                   '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id'
+                   console.log(result);
+            return result
            }
            initiate = $('#example').DataTable({
              responsive: true,
@@ -525,9 +785,11 @@
                  text: '<i class="fas fa-file-excel mr-1"></i> Export Excel ',
                  className: 'btn-sm btn-success',
                  autoFilter: true,
-                 messageTop: 'Data yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
-                   tempDate +
-                   '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id'
+                 messageTop: function () {
+                        return ' Data dengan kata kunci ('+keys+') yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
+                        tempDate +
+                            '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id';
+                },
                },
                {
                  title: 'RUP - Cari Paket Penyedia',
@@ -536,10 +798,13 @@
                  className: 'btn-sm btn-danger',
                  autoFilter: true,
                  orientation: 'landscape',
-                 pageSize: 'LEGAL',
-                 messageTop: ' Data yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
-                   tempDate +
-                   '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id',
+                 pageSize: 'TABLOID',
+                 messageTop: function () {
+                    return ' Data dengan kata kunci ('+keys+') yang terdapat pada berkas ini dipopulasi secara otomatis oleh SIRUP pada tanggal ' +
+                    tempDate +
+                    '. Untuk melihat paket yang telah terumumkan dan lebih terbaru silahkan kunjungi sirup.lkpp.go.id';
+                },
+                //  messageTop: 
                 //  customize: async function (doc) {
                 //    // console.log(base64String);
 

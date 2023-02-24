@@ -15,7 +15,11 @@ class SirupController {
         return view.render('index', { data: data })
 
     }
-
+    async getDataFromList({params}){
+        var checks= await DataMongo.getData({idQuery:Number(params.id)})
+        // console.log(checks);
+        return checks
+    }
     async getData({params}){
         if(params.value){
             let data=params.value.split(',')
@@ -30,7 +34,8 @@ class SirupController {
     async deleteQuery({params,response,session}){
         let check= await DataMongo.getData({name:'query_collections'})
         // console.log(params.id);
-        var del=   await DataMongo.deleteData(check[0]._id,Number(params.id))
+        var del=   await DataMongo.deleteQueryData(check[0]._id,Number(params.id))
+         await DataMongo.deleteDataTable(Number(params.id))
         if(del.acknowledged){
             session.flash({
                 msgSuccess: 'Your query has been deleted successfully.'
@@ -98,19 +103,19 @@ async function getsirup(data){
                     'Cookie': 'f5avraaaaaaaaaaaaaaaa_session_=PPOEEAIFOEKOPEEFIPEJPGIKMKFAKLJKDALENINDPJDJOMEIDCEDLHODJBJLAOOCNLKDAMJPEPODDDGIJEIAOJDKLCEJGGGBCAPPINCHGGAECFCMHOKCFJGPLPLMOJNI; PLAY_SESSION=0dc396a7dcc74f68b179ce0add3116d22abb0731-___TS=1676883793702&tahunAnggaranPilihan=2023&___ID=1aa0357c-804d-4fd3-b048-4a276c155650; TS01a5491d=01e621ef1d8d2e84d9234e723989eea25c4067a7a075fb396580780ffc4aa9c13e10027694953d8957bafeaf6d661a0e6bdaf02bad7c392a1ae9b54230975c1751e37b8b835d904816fe4b855092bbaf3c713cfbac5ec042723181a8df5240c12db7af35d3; TS01d9b9aa=01e621ef1d81559d8c0002bd1111cd308dc2e4996825346b390811b9e6c118f6b7b5446688c788f7e16a2ea51e560c87c82109ce412e0797b8a5f96b2ee380f7cef8b4201d'
                 }
                 };
-                // await axios(config)
-                // .then(function (responses) {
-                //     // temp.push(responses.data.data)
-                //     for (let index = 0; index < responses.data.data.length; index++) {
-                //         temp.push(responses.data.data[index])
+                await axios(config)
+                .then(function (responses) {
+                    // temp.push(responses.data.data)
+                    for (let index = 0; index < responses.data.data.length; index++) {
+                        temp.push(responses.data.data[index])
                         
-                //     }
-                // })
-                // .catch(function (error) {
-                // // console.log(error);
-                // temp[0]=false
+                    }
+                })
+                .catch(function (error) {
+                // console.log(error);
+                temp[0]=false
             
-                // });
+                });
             
         }   
     }else{
@@ -124,34 +129,22 @@ async function getsirup(data){
                 'Cookie': 'f5avraaaaaaaaaaaaaaaa_session_=PPOEEAIFOEKOPEEFIPEJPGIKMKFAKLJKDALENINDPJDJOMEIDCEDLHODJBJLAOOCNLKDAMJPEPODDDGIJEIAOJDKLCEJGGGBCAPPINCHGGAECFCMHOKCFJGPLPLMOJNI; PLAY_SESSION=0dc396a7dcc74f68b179ce0add3116d22abb0731-___TS=1676883793702&tahunAnggaranPilihan=2023&___ID=1aa0357c-804d-4fd3-b048-4a276c155650; TS01a5491d=01e621ef1d8d2e84d9234e723989eea25c4067a7a075fb396580780ffc4aa9c13e10027694953d8957bafeaf6d661a0e6bdaf02bad7c392a1ae9b54230975c1751e37b8b835d904816fe4b855092bbaf3c713cfbac5ec042723181a8df5240c12db7af35d3; TS01d9b9aa=01e621ef1d81559d8c0002bd1111cd308dc2e4996825346b390811b9e6c118f6b7b5446688c788f7e16a2ea51e560c87c82109ce412e0797b8a5f96b2ee380f7cef8b4201d'
             }
             };
-            // await axios(config)
-            // .then(function (responses) {
-            //     // temp.push(responses.data.data)
-            //     for (let index = 0; index < responses.data.data.length; index++) {
-            //         temp.push(responses.data.data[index])
+            await axios(config)
+            .then(function (responses) {
+                // temp.push(responses.data.data)
+                for (let index = 0; index < responses.data.data.length; index++) {
+                    temp.push(responses.data.data[index])
                     
-            //     }
-            // })
-            // .catch(function (error) {
-            // console.log(error);
-            // temp[0]=false
+                }
+            })
+            .catch(function (error) {
+            console.log(error);
+            temp[0]=false
 
         
-            // });
+            });
     }
-    await axios(config)
-    .then(function (responses) {
-        // temp.push(responses.data.data)
-        for (let index = 0; index < responses.data.data.length; index++) {
-            temp.push(responses.data.data[index])
-            
-        }
-    })
-    .catch(function (error) {
-    // console.log(error);
-    temp[0]=false
-
-    });
+ 
     return temp
         
 }

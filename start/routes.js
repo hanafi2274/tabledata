@@ -21,3 +21,4 @@ Route.get("/testing", "SirupController.testing");
 Route.get("/preview/:value?", "SirupController.getData");
 Route.get("/addQuery/:query", "SirupController.savedQuery");
 Route.get("/delQuery/:id?", "SirupController.deleteQuery");
+Route.get("/previewData/:id", "SirupController.getDataFromList");
