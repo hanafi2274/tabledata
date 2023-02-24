@@ -168,21 +168,33 @@
                var pemilihanUnique = pemilihan.filter((value, index, array) => array.indexOf(value) === index);
                var radarName = []
                var radarValue = []
+               var tempRadarName=[]
                for (let index = 0; index < pemilihanUnique.length; index++) {
-                 radarName.push({
-                   text: pemilihanUnique[index]
-                 })
-                //  console.log(x.data.length);
-
-                 var tempValues = 0
+                    let tempRadarNames=pemilihanUnique[index].split(' ')
+                    tempRadarName.push({year:tempRadarNames[1],month:tempRadarNames[0]})
+                  
+             
+                
+               }
+               tempRadarName.sort(sorter);
+                //  console.log(tempRadarName);
+                 //  console.log(x.data.length);
+               
+                 for (let index = 0; index < tempRadarName.length; index++) {
+                    
+                     radarName.push({
+                    text: tempRadarName[index].month+" "+tempRadarName[index].year
+                  })
+                  var tempValues = 0
                  for (let i = 0; i < x.data.length; i++) {
-                   if (x.data[i].pemilihan == pemilihanUnique[index]) {
+                   if (x.data[i].pemilihan == tempRadarName[index].month+" "+tempRadarName[index].year) {
                      tempValues += x.data[i].pagu
 
                    }
                  }
                  radarValue.push(tempValues)
-               }
+                 }
+               
                for (let index = 0; index < x.data.length; index++) {
 
                  delete x.data[index].idBulan
@@ -454,7 +466,15 @@
                })
              })
            }
-
+           const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+                    const sorter = (a, b) => {
+                    if(a.year !== b.year){
+                        return a.year - b.year;
+                    }else{
+                        return months.indexOf(a.month) - months.indexOf(b.month);
+                    };
+                    };
            async function getData() {
             var tempQuery = $('#query').val()
             let dates=new Date()
@@ -491,21 +511,36 @@
                var pemilihanUnique = pemilihan.filter((value, index, array) => array.indexOf(value) === index);
                var radarName = []
                var radarValue = []
+               var tempRadarName=[]
                for (let index = 0; index < pemilihanUnique.length; index++) {
-                 radarName.push({
-                   text: pemilihanUnique[index]
-                 })
-                //  console.log(x.data.length);
-
-                 var tempValues = 0
+                    let tempRadarNames=pemilihanUnique[index].split(' ')
+                    tempRadarName.push({year:tempRadarNames[1],month:tempRadarNames[0]})
+                  
+             
+                
+               }
+               tempRadarName.sort(sorter);
+                //  console.log(tempRadarName);
+                 //  console.log(x.data.length);
+                    console.log(tempRadarName[0].month);
+               
+                 for (let index = 0; index < tempRadarName.length; index++) {
+                    
+                     radarName.push({
+                    text: tempRadarName[index].month+" "+tempRadarName[index].year
+                  })
+                  var tempValues = 0
                  for (let i = 0; i < x.data.length; i++) {
-                   if (x.data[i].pemilihan == pemilihanUnique[index]) {
+                    // console.log(x.data[i].pemilihan);
+                    // console.log(tempRadarName[index].month+" "+tempRadarName[index].year);
+                    // console.log(x.data[i].pemilihan == tempRadarName[index].month+" "+tempRadarName[index].year);
+                   if (x.data[i].pemilihan === tempRadarName[index].month+" "+tempRadarName[index].year) {
                      tempValues += x.data[i].pagu
-
+                    console.log(true);
                    }
                  }
                  radarValue.push(tempValues)
-               }
+                 }
                for (let index = 0; index < x.data.length; index++) {
 
                  delete x.data[index].idBulan

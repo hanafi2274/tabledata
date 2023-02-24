@@ -7,8 +7,8 @@ const { MongoClient } = require('mongodb');
 const DataMongo = use("App/Models/Mongo/ExternalData")
 class GetDailyData extends Task {
   static get schedule () {
-    // return '0 0 7,12 * * *'
-    return '* * * * * *'
+    return '0 0 7,12 * * *'
+    // return '* * * * * *'
   }
 
   async handle () {
