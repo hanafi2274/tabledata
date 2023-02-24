@@ -8,7 +8,8 @@ const { ObjectID } = use('mongodb')
 const Env = use('Env')
 const url = Env.get('MONGO_URL')
 const db_ = Env.get('MONGO_DATABASE')
-
+console.log(url);
+console.log(db_);
 const collection = 'RUP'
 const client = new MongoClient(url);
 const db = client.db(db_);
