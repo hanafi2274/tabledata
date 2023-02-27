@@ -1,8 +1,13 @@
 'use strict'
+const Env = use('Env')
 const axios = require('axios');
 const moment = require('moment');
 const { MongoClient } = require('mongodb');
 const DataMongo = use("App/Models/Mongo/ExternalData")
+const url = {
+	
+    baseUrl: Env.get('BASE_URL')
+}
 class SirupController {
     // async testing ({request,response}){
     //     // const a =  await DataMongo.getData()
@@ -12,7 +17,7 @@ class SirupController {
 
     async index ({ request, view, response, auth }){
        var data= await DataMongo.getData({name:'query_collections'})
-        return view.render('index', { data: data })
+        return view.render('index', { data: data, url:url })
 
     }
     async getDataFromList({params}){

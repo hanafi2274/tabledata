@@ -1,15 +1,12 @@
 'use strict'
 const { query } = require('@adonisjs/lucid/src/Lucid/Model');
 const { MongoClient } = require('mongodb');
-// const url = 'mongodb://userSiwalusi:!Welkom123@54.254.27.64:27017/admin?authSource=admin&readPreference=primary&ssl=false&directConnection=true'
-// const db_ = 'siwalusiDataExternal?authSource=admin'
+
 // // local
 const { ObjectID } = use('mongodb')
 const Env = use('Env')
 const url = Env.get('MONGO_URL')
 const db_ = Env.get('MONGO_DATABASE')
-console.log(url);
-console.log(db_);
 const collection = 'RUP'
 const client = new MongoClient(url);
 const db = client.db(db_);
