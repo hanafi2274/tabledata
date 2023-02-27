@@ -51,7 +51,7 @@ class GetDailyData extends Task {
         }
         if(checks){
            var res=  await DataMongo.updateDataTable(id,temp)
-           console.log(res);
+        //    console.log(res);
         }
     }
   }
