@@ -139,13 +139,12 @@
             await axios.get('previewData/'+id).then(async (y) => {
                 let x=y.data[0]
                 let date= new Date(x.updated_at)
-               
                 nowDate=date
                 tempDate = nowDate.getDate() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getFullYear() + ' ' + nowDate
              .getHours() + ':' + nowDate.getMinutes() + ':' + nowDate.getSeconds()
                 // console.log(tempDate);
              messagePdf(tempDate)
-
+                if(x.data[0]){
                 let title
                 for (let index = 0; index < data[0].query.length; index++) {
                     if(data[0].query[index].id==y.data[0].idQuery){
@@ -156,7 +155,7 @@
                 }
                 keys=title
                 $('#title').html(title)
-                $('#date').html(date.getDate()+' '+ month[date.getMonth()]+' '+date.getFullYear()+'   '+date.getHours()+':'+date.getMinutes())
+                $('#date').html(date.getDate()+' '+ month[date.getMonth()]+' '+date.getFullYear()+'   '+date.getHours()+':'+('0'+date.getMinutes()).slice(-2))
                 var tempresult = []
                var pagu = 0
                let rupiah = new Intl.NumberFormat('id-ID');
@@ -315,7 +314,8 @@
                $('#example').DataTable().row(0).remove();
                initiate.rows.add(newsData).draw()
                $('#example').DataTable().searchPanes.rebuildPane();
-               if (x.data) {
+            }
+               if (x.data[0]) {
                 //  console.log(radarValue);
                  option = {
 
@@ -366,7 +366,7 @@
                  Swal.fire({
                    icon: 'error',
                    title: 'Oops...',
-                   text: 'Something went wrong!'
+                   text: 'Data is empty!'
                  })
                }
             //    html2canvas(element).then(function (canvas) {
@@ -383,7 +383,11 @@
                 }).catch(err => {
               console.log(err)
               Swal.close()
-
+              Swal.fire({
+                   icon: 'error',
+                   title: 'Oops...',
+                   text: 'Data is empty!'
+                 })
                 })
            }
            async function addQuery(){
@@ -492,7 +496,7 @@
                }
                keys=send.join()
                $('#title').html(send.join())
-               $('#date').html(dates.getDate()+' '+ month[dates.getMonth()]+' '+dates.getFullYear()+'   '+dates.getHours()+':'+dates.getMinutes())
+               $('#date').html(dates.getDate()+' '+ month[dates.getMonth()]+' '+dates.getFullYear()+'   '+dates.getHours()+':'+('0'+dates.getMinutes()).slice(-2))
              } else {
                var send = ""
              }
