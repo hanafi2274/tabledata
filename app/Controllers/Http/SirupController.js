@@ -4,10 +4,7 @@ const axios = require('axios');
 const moment = require('moment');
 const { MongoClient } = require('mongodb');
 const DataMongo = use("App/Models/Mongo/ExternalData")
-const url = {
-	
-    baseUrl: Env.get('BASE_URL')
-}
+const url = Env.get('BASE_URL')
 class SirupController {
     // async testing ({request,response}){
     //     // const a =  await DataMongo.getData()

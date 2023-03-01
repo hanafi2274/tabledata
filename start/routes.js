@@ -18,9 +18,7 @@ const Route = use('Route')
 // Route.on('/').render('index')
 Route.get("/", "SirupController.index");
 Route.get("/testing", "SirupController.testing");
-Route.get("/preview/:value?", "SirupController.getData", async ({ response }) => {
-    response.implicitEnd = false});
-Route.get("/addQuery/:query", "SirupController.savedQuery", async ({ response }) => {
-    response.implicitEnd = false});
+Route.get("/preview/:value?", "SirupController.getData");
+Route.get("/addQuery/:query", "SirupController.savedQuery");
 Route.get("/delQuery/:id?", "SirupController.deleteQuery");
 Route.get("/previewData/:id", "SirupController.getDataFromList");

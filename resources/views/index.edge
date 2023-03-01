@@ -11,7 +11,7 @@
                 <label style="font-size:29px; font-weight:700;"> Query</label>
                 <input class="tagify " type="text" placeholder="Enter Query" name="query" id="query" required>
                 <div style="margin-top:10px;">
-                  <button type="button" onclick="getData()" class="btn btn-info">Preview</button>
+                  <button id="realtimePreview" type="button" onclick="getData()" disabled class="btn btn-info">Preview</button>
                   <button type="button" onclick="addQuery()" class="btn btn-success">Add Query</button>
                 </div>
               </div>
@@ -35,7 +35,7 @@
                             <div class="">
                               <a href="#" onclick="previewDataList({{data.id}})"
                                 class="btn btn-sm btn-dark mr-2 "  style="font-size:12px;width:90px"><i class="fas fa-table mr-2 fa-sm"></i>Preview</a>
-                              <a href="#" onclick="deleteConfirm('/delQuery/{{data.id}}')"
+                              <a href="#" onclick="deleteConfirm('{{url}}/delQuery/{{data.id}}')"
                                 class="btn btn-sm btn-danger " style="font-size:12px"><i class="fas fa-trash-alt mr-2 fa-sm"></i>Delete</a>
                             </div>
                           </div>
@@ -114,6 +114,13 @@
     <script>
           var data={{{toJSON(data)}}};
           var url={{{toJSON(url)}}};
+          $('#query').change((x)=>{
+            if(x.target.value){
+                document.getElementById("realtimePreview").disabled = false;
+            }else{
+                document.getElementById("realtimePreview").disabled = true;
+            }
+          })
            var dom = document.getElementById('chart-container');
            var myChart = echarts.init(dom, null, {
              renderer: 'canvas',
@@ -135,7 +142,7 @@
            var tempDate ,keys
            async function previewDataList(id){
             loading()
-            await axios.get(url.baseUrl+'previewData/'+id).then(async (y) => {
+            await axios.get(url+'previewData/'+id).then(async (y) => {
                 let x=y.data[0]
                 let date= new Date(x.updated_at)
                 nowDate=date
@@ -400,7 +407,7 @@
                 }
                 var send=tempQueryValue.join()
                 // console.log(tempQueryValue.join());
-                await axios.get(url.baseUrl+'addQuery/'+send).then(async (x) => {
+                await axios.get(url+'addQuery/'+send).then(async (x) => {
                     if(x){
                         Swal.fire({
                     position: 'top-end',
@@ -457,7 +464,7 @@
                 })
             }
            async function deleteData(id){
-            await axios.get(url.baseUrl+'/delQuery/'+id).then(async (x) => {
+            await axios.get(url+'/delQuery/'+id).then(async (x) => {
                 // console.log(x);
             }).catch(err => {
             //    console.log(err)
@@ -478,8 +485,10 @@
                         return months.indexOf(a.month) - months.indexOf(b.month);
                     };
                     };
+    
            async function getData() {
-            var tempQuery = $('#query').val()
+         
+            var tempQuery = await $('#query').val()
             let dates=new Date()
             nowDate=dates
             tempDate = nowDate.getDate() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getFullYear() + ' ' + nowDate
@@ -500,7 +509,7 @@
                var send = ""
              }
              loading()
-             await axios.get(send ? (url.baseUrl+'/preview/' + send ): (url.baseUrl+'/preview/')).then(async (x) => {
+             await axios.get((url+'/preview/' + send )).then(async (x) => {
               
             
                var tempresult = []
@@ -525,7 +534,7 @@
                tempRadarName.sort(sorter);
                 //  console.log(tempRadarName);
                  //  console.log(x.data.length);
-                    console.log(tempRadarName[0].month);
+                    // console.log(tempRadarName[0].month);
                
                  for (let index = 0; index < tempRadarName.length; index++) {
                     
@@ -539,7 +548,7 @@
                     // console.log(x.data[i].pemilihan == tempRadarName[index].month+" "+tempRadarName[index].year);
                    if (x.data[i].pemilihan === tempRadarName[index].month+" "+tempRadarName[index].year) {
                      tempValues += x.data[i].pagu
-                    console.log(true);
+                    // console.log(true);
                    }
                  }
                  radarValue.push(tempValues)
@@ -739,7 +748,9 @@
                })
              })
            }
-
+           window.onresize = function() {
+            myChart.resize()
+};
 
            function loading() {
              Swal.fire({
