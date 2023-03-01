@@ -42,13 +42,13 @@ class SirupController {
             session.flash({
                 msgSuccess: 'Your query has been deleted successfully.'
               })
-            return response.redirect('/');
+            return response.redirect(url);
          
         }else{
             session.flash({
                 msgError: 'Something went wrong.'
               })
-              return response.redirect('/');
+              return response.redirect(url);
 
         }
     }    
