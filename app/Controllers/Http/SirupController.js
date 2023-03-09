@@ -55,7 +55,7 @@ class SirupController {
     async savedQuery({request,response,params,view}){
         var querys=[]
         let idQuery=moment().unix()
-        querys.push({id:idQuery,keywords:params.query})
+        querys.push({id:idQuery,keywords:params.query.replace(/%20/g, " ")})
         let check= await DataMongo.getData({name:'query_collections'})
         // console.log(check);
         if(check==0){
